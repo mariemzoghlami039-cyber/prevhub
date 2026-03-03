@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ProjetDetail from "./ProjetDetail";
 import "./App.css";
 
 // ══════════════════════════════════════════════════════════════
@@ -127,10 +128,10 @@ const MOCK_CALENDRIER = [
 ];
 
 const MOCK_PROFIL = {
-  nom: "Mariem Zoghlami",
+  nom: "Marie Zoghlami",
   email: "admin@preveris.pro",
   role: "Administrateur",
-  telephone: "+216 97333006",
+  telephone: "+33 6 12 34 56 78",
   poste: "Directrice Administrative",
   dateInscription: "2025-01-01",
   avatar: "M",
@@ -264,7 +265,7 @@ function LoginPage({ onLogin }) {
     setLoading(true);
     setTimeout(() => {
       if (email === "admin@preveris.pro" && password === "admin123") {
-        onLogin({ nom: "Mariem Zoghlami", email, role: "Administrateur", avatar: "M" });
+        onLogin({ nom: "Marie Zoghlami", email, role: "Administrateur", avatar: "M" });
       } else {
         setError("Email ou mot de passe incorrect.");
         setLoading(false);
@@ -451,49 +452,144 @@ function Dashboard({ setPage }) {
 
 // ── PROJETS ────────────────────────────────────────────────
 function ProjetsPage() {
-  const [projets, setProjets] = useState(MOCK_PROJETS);
-  const [modal, setModal] = useState(null);
-  const [form, setForm] = useState({});
+  const [projets, setProjets]       = useState(MOCK_PROJETS);
+  const [selected, setSelected]     = useState(null);
+  const [modalNew, setModalNew]     = useState(false);
+  const [form, setForm]             = useState({});
+  const [search, setSearch]         = useState("");
+  const [filterStatut, setFilter]   = useState("Tous");
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
-  const STATUTS = ["En brouillon", "Devis accepté", "En cours", "Réalisation pièces écrites", "Terminé"];
-  const save = () => {
-    if (modal === "new") setProjets(prev => [...prev, { ...form, id: Date.now(), date: today() }]);
-    else setProjets(prev => prev.map(p => p.id === form.id ? form : p));
-    setModal(null);
+
+  const STATUTS_FILTER = ["Tous", "En brouillon", "En attente de signature client", "Dossier envoyé", "Réalisation projet", "Terminé"];
+
+  const filtered = projets.filter(p => {
+    const matchSearch = p.client.toLowerCase().includes(search.toLowerCase()) || String(p.id).includes(search);
+    const matchStatut = filterStatut === "Tous" || p.statut === filterStatut;
+    return matchSearch && matchStatut;
+  });
+
+  const createProjet = () => {
+    if (!form.client) return;
+    const newP = { ...form, id: projets.length + 900 + 1, date: today(), statut: form.statut || "En brouillon", montant: Number(form.montant) || 0 };
+    setProjets(prev => [newP, ...prev]);
+    setModalNew(false);
+    setForm({});
   };
+
+  const saveProjet = (updated) => {
+    setProjets(prev => prev.map(p => p.id === updated.id ? updated : p));
+  };
+
+  const STATUT_COLORS_MAP = {
+    "En brouillon": "#6b7280",
+    "En attente de signature client": "#f59e0b",
+    "En attente de retour du client": "#f59e0b",
+    "Dossier envoyé": "#3b82f6",
+    "Réalisation pièces graphiques": "#8b5cf6",
+    "Réalisation projet": "#8b5cf6",
+    "Devis accepté": "#10b981",
+    "En cours": "#3b82f6",
+    "Terminé": "#059669",
+  };
+
   return (
     <div>
+      {/* Header */}
       <div className="page-header">
-        <h2 className="page-title">📁 Projets <span style={{ fontSize: 15, color: "var(--text-muted)", fontWeight: 600 }}>({projets.length})</span></h2>
-        <Btn onClick={() => { setForm({ nom: "", client: "", statut: "En brouillon", montant: "", resp: "" }); setModal("new"); }}>＋ Nouveau Projet</Btn>
+        <h2 className="page-title">📁 Projets <span style={{ fontSize: 15, color: "var(--text-muted)", fontWeight: 600 }}>({filtered.length})</span></h2>
+        <Btn onClick={() => { setForm({ client: "", ville: "", statut: "En brouillon", montant: "", resp: "" }); setModalNew(true); }}>＋ Nouveau Projet</Btn>
       </div>
-      <Card><div className="table-wrap"><table>
-        <thead><tr>{["Projet", "Client", "Statut", "Montant", "Responsable", "Date", "Actions"].map(h => <th key={h}>{h}</th>)}</tr></thead>
-        <tbody>{projets.map(p => (
-          <tr key={p.id}>
-            <td className="td-name">{p.nom}</td>
-            <td className="td-muted">{p.client}</td>
-            <td><Badge label={p.statut} /></td>
-            <td className="td-money">{Number(p.montant).toLocaleString()} €</td>
-            <td className="td-muted">{p.resp}</td>
-            <td className="td-tiny">{p.date}</td>
-            <td>
-              <button className="action-btn" onClick={() => { setForm(p); setModal("edit"); }}>✏️</button>
-              <button className="action-btn" onClick={() => setProjets(prev => prev.filter(x => x.id !== p.id))}>🗑️</button>
-            </td>
-          </tr>
-        ))}</tbody>
-      </table></div></Card>
-      {(modal === "new" || modal === "edit") && (
-        <Modal title={modal === "new" ? "Nouveau Projet" : "Modifier Projet"} onClose={() => setModal(null)}>
-          <Field label="Nom du projet" value={form.nom || ""} onChange={f("nom")} />
-          <Field label="Client" value={form.client || ""} onChange={f("client")} />
-          <Field label="Statut" value={form.statut || ""} onChange={f("statut")} options={STATUTS} />
-          <Field label="Montant (€)" value={form.montant || ""} onChange={f("montant")} type="number" />
-          <Field label="Responsable" value={form.resp || ""} onChange={f("resp")} />
+
+      {/* Filtres */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
+        <input
+          style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid var(--border)", background: "var(--bg)", fontSize: 13, outline: "none", minWidth: 200 }}
+          placeholder="🔍 Num projet ou nom enseigne..."
+          value={search} onChange={e => setSearch(e.target.value)}
+        />
+        <select
+          style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid var(--border)", background: "var(--bg)", fontSize: 13, outline: "none" }}
+          value={filterStatut} onChange={e => setFilter(e.target.value)}>
+          {STATUTS_FILTER.map(s => <option key={s}>{s}</option>)}
+        </select>
+      </div>
+
+      {/* Table — style backoffice.preveris.pro */}
+      <Card style={{ padding: 0, overflow: "hidden" }}>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr style={{ background: "var(--bg)" }}>
+                {["N° de projet ↕", "NOM ENSEIGNE ↕", "VILLE ↕", "ÉTAT PROJET ↕", "RÉALISATEUR(S) ↕", "DEADLINE CLIENT ↕", "DERNIÈRE ACTUALISATION ↕", "SYNTHÈSE", "ACTIONS"].map(h => (
+                  <th key={h} style={{ fontSize: 11, letterSpacing: "0.5px", textTransform: "uppercase" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(p => {
+                const sc = STATUT_COLORS_MAP[p.statut] || "#6b7280";
+                const isLate = p.deadlineClient && new Date(p.deadlineClient) < new Date();
+                return (
+                  <tr key={p.id} style={{ cursor: "pointer" }}
+                    onClick={() => setSelected(p)}
+                    title="Cliquer pour ouvrir les détails du projet">
+                    <td style={{ fontWeight: 700, color: "var(--primary)", fontSize: 15 }}>{p.id}</td>
+                    <td style={{ fontWeight: 700 }}>{p.client}</td>
+                    <td className="td-muted">{p.ville || p.adresse || "—"}</td>
+                    <td>
+                      <span style={{ background: sc + "22", color: sc, border: `1px solid ${sc}44`, borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
+                        {p.statut}
+                      </span>
+                    </td>
+                    <td style={{ color: p.resp ? "var(--text-primary)" : "var(--text-muted)", fontStyle: p.resp ? "normal" : "italic" }}>
+                      {p.resp || "Non assigné"}
+                    </td>
+                    <td style={{ color: isLate ? "var(--danger)" : "var(--text-primary)", fontWeight: isLate ? 700 : 400, fontSize: 13 }}>
+                      {p.deadlineClient || "—"}
+                    </td>
+                    <td className="td-muted" style={{ fontSize: 13 }}>{p.date}</td>
+                    <td>
+                      {p.synthese ? (
+                        <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>{p.synthese.slice(0, 40)}...</span>
+                      ) : (
+                        <span style={{ color: "var(--primary)", fontSize: 13, fontWeight: 600 }}>
+                          ✏️ Ajouter une synthèse
+                        </span>
+                      )}
+                    </td>
+                    <td onClick={e => e.stopPropagation()}>
+                      <button className="action-btn" onClick={() => setSelected(p)} title="Ouvrir">📂</button>
+                      <button className="action-btn" onClick={() => setProjets(prev => prev.filter(x => x.id !== p.id))} title="Supprimer">🗑️</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Modal ProjetDetail */}
+      {selected && (
+        <ProjetDetail
+          projet={selected}
+          onClose={() => setSelected(null)}
+          onSave={(updated) => { saveProjet(updated); setSelected(updated); }}
+        />
+      )}
+
+      {/* Modal Nouveau Projet */}
+      {modalNew && (
+        <Modal title="Nouveau Projet" onClose={() => setModalNew(false)}>
+          <Field label="Nom Enseigne (Client)" value={form.client || ""} onChange={f("client")} />
+          <Field label="Ville" value={form.ville || ""} onChange={f("ville")} />
+          <Field label="Adresse" value={form.adresse || ""} onChange={f("adresse")} />
+          <Field label="État initial" value={form.statut || ""} onChange={f("statut")} options={["En brouillon", "En attente de signature client", "Dossier envoyé", "Réalisation projet"]} />
+          <Field label="Montant estimé (€)" value={form.montant || ""} onChange={f("montant")} type="number" />
+          <Field label="Réalisateur" value={form.resp || ""} onChange={f("resp")} />
           <div className="modal-footer">
-            <Btn outline onClick={() => setModal(null)}>Annuler</Btn>
-            <Btn onClick={save}>{modal === "new" ? "Créer" : "Enregistrer"}</Btn>
+            <Btn outline onClick={() => setModalNew(false)}>Annuler</Btn>
+            <Btn onClick={createProjet}>Créer le Projet</Btn>
           </div>
         </Modal>
       )}

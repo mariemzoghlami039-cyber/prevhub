@@ -1044,3 +1044,59 @@ tbody td {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ══════════════════════════════════════
+   PROJET DETAIL MODAL
+══════════════════════════════════════ */
+.pd-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  z-index: 600; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+.pd-modal {
+  background: var(--bg-card); width: 92vw; max-width: 1100px;
+  max-height: 92vh; border-radius: 16px;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3); animation: slideUp 0.2s ease;
+}
+.pd-header { background: var(--primary); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.pd-header-title { display: flex; align-items: center; gap: 8px; color: #fff; flex-wrap: wrap; }
+.pd-header-num { font-size: 18px; font-weight: 700; opacity: 0.85; }
+.pd-header-client { font-size: 20px; font-weight: 900; }
+.pd-header-addr { font-size: 14px; opacity: 0.8; }
+.pd-close { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+.pd-close:hover { background: rgba(255,255,255,0.35); }
+.pd-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); padding: 0 24px; background: var(--bg-card); flex-shrink: 0; overflow-x: auto; }
+.pd-tab { background: none; border: none; padding: 14px 18px; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--text-secondary); border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: var(--transition); font-family: 'Nunito', sans-serif; }
+.pd-tab:hover { color: var(--primary); }
+.pd-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.pd-save-bar { padding: 10px 24px; background: var(--bg); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.pd-save-btn { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 9px 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Nunito', sans-serif; }
+.pd-save-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.pd-body { flex: 1; overflow-y: auto; padding: 24px; }
+.pd-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-shrink: 0; background: var(--bg); }
+.pd-section-title { font-size: 15px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.pd-info-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+.pd-info-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+.pd-info-value { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+.pd-info-value.locked { color: var(--text-secondary); background: var(--border-light); padding: 6px 10px; border-radius: 6px; }
+.pd-locked-badge { font-size: 11px; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-left: auto; }
+.pd-input { width: 100%; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: 'Nunito', sans-serif; color: var(--text-primary); background: var(--bg-input); transition: var(--transition); outline: none; }
+.pd-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(232,93,38,0.1); }
+.pd-contact-card { display: flex; align-items: center; gap: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 10px; }
+.pd-membre-card { display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; min-width: 240px; flex: 1; }
+.pd-pipeline { display: flex; gap: 0; overflow-x: auto; padding: 16px 0; position: relative; }
+.pd-pipeline::before { content: ''; position: absolute; top: 34px; left: 20px; right: 20px; height: 3px; background: var(--border); z-index: 0; }
+.pd-etape { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; min-width: 90px; cursor: pointer; position: relative; z-index: 1; transition: var(--transition); }
+.pd-etape-circle { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; transition: var(--transition); color: var(--text-muted); }
+.pd-etape.done .pd-etape-circle { background: var(--success); border-color: var(--success); color: #fff; }
+.pd-etape.active .pd-etape-circle { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(232,93,38,0.2); }
+.pd-etape-label { font-size: 10px; font-weight: 600; text-align: center; color: var(--text-muted); line-height: 1.3; }
+.pd-etape.active .pd-etape-label { color: var(--primary); font-weight: 800; }
+.pd-etape.done .pd-etape-label { color: var(--success); }
+.pd-histo-row { display: flex; gap: 12px; padding: 10px 0 10px 16px; border-left: 3px solid var(--border); margin-left: 16px; position: relative; }
+.pd-histo-dot { position: absolute; left: -8px; top: 14px; width: 14px; height: 14px; border-radius: 50%; background: var(--primary); border: 2px solid var(--bg-card); }
+.pd-histo-content { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
+.pd-tache-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--border-light); border-radius: var(--radius-sm); transition: background 0.15s; }
+.pd-tache-row:hover { background: var(--bg-hover); }
+.pd-doc-row { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; background: var(--bg); }
