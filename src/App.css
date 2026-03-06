@@ -42,20 +42,20 @@
 }
 
 /* ── Dark Mode ── */
-.dark {
-  --bg: #0f172a;
-  --bg-card: #1e293b;
-  --bg-nav: #1e293b;
-  --bg-input: #0f172a;
-  --bg-hover: #2d3f55;
-  --bg-table-hover: #253347;
+.dark, body.dark {
+  --bg: #0d0f18;
+  --bg-card: #13161f;
+  --bg-nav: #13161f;
+  --bg-input: #1a1d2e;
+  --bg-hover: #1e2235;
+  --bg-table-hover: #181b28;
 
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #e8eaf0;
+  --text-secondary: #9095a8;
+  --text-muted: #5c6278;
 
-  --border: #334155;
-  --border-light: #1e293b;
+  --border: #232638;
+  --border-light: #1a1d2e;
 
   --shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
   --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.6);
@@ -1100,3 +1100,428 @@ tbody td {
 .pd-tache-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--border-light); border-radius: var(--radius-sm); transition: background 0.15s; }
 .pd-tache-row:hover { background: var(--bg-hover); }
 .pd-doc-row { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; background: var(--bg); }
+
+/* ══════════════════════════════════════
+   LOGIN V2 — Split screen
+══════════════════════════════════════ */
+.login2-page {
+  min-height: 100vh; display: flex;
+}
+
+.login2-left {
+  width: 420px; flex-shrink: 0;
+  background: #fff; padding: 36px 48px;
+  display: flex; flex-direction: column;
+  box-shadow: 4px 0 30px rgba(0,0,0,0.06);
+}
+
+.login2-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 48px; }
+.login2-logo-icon { width: 38px; height: 38px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #fff; }
+.login2-logo-text { font-size: 22px; font-weight: 900; color: var(--text-primary); }
+
+.login2-form-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.login2-lock { font-size: 40px; text-align: center; margin-bottom: 16px; }
+.login2-title { font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 6px; }
+.login2-sub { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 28px; }
+
+.login2-field { margin-bottom: 18px; }
+.login2-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-secondary); }
+.login2-input-wrap { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; gap: 10px; background: var(--bg); transition: var(--transition); }
+.login2-input-wrap:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(232,93,38,0.1); }
+.login2-icon { font-size: 16px; flex-shrink: 0; }
+.login2-input { flex: 1; border: none; outline: none; background: transparent; font-size: 14px; font-family: 'Nunito', sans-serif; color: var(--text-primary); }
+.login2-eye { background: none; border: none; cursor: pointer; font-size: 16px; padding: 0; }
+
+.login2-btn { width: 100%; padding: 13px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: var(--transition); font-family: 'Nunito', sans-serif; margin-top: 8px; }
+.login2-btn:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,93,38,0.3); }
+.login2-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.login2-hint { text-align: center; margin-top: 16px; font-size: 12px; color: var(--text-muted); background: #f8fafc; border-radius: 8px; padding: 8px; }
+
+/* Côté droit */
+.login2-right {
+  flex: 1; background: var(--primary);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  justify-content: center; padding: 60px;
+}
+
+/* Shapes décoratives */
+.login2-shape { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.1); }
+.login2-shape-1 { width: 300px; height: 300px; top: -80px; right: -60px; }
+.login2-shape-2 { width: 200px; height: 200px; bottom: 100px; left: -60px; background: rgba(255,255,255,0.08); }
+.login2-shape-3 { width: 150px; height: 150px; top: 200px; left: 40px; background: rgba(255,255,255,0.06); }
+.login2-shape-4 { width: 100px; height: 100px; bottom: 40px; right: 120px; background: rgba(255,255,255,0.12); }
+
+.login2-badges { display: flex; gap: 12px; margin-bottom: 40px; position: relative; z-index: 1; }
+.login2-badge { background: rgba(255,255,255,0.2); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; backdrop-filter: blur(4px); }
+
+.login2-hero { position: relative; z-index: 1; margin-bottom: 48px; }
+.login2-hero-title { font-size: 42px; font-weight: 900; color: rgba(255,255,255,0.85); line-height: 1.15; margin-bottom: 16px; }
+.login2-hero-sub { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.6; max-width: 440px; }
+
+.login2-features { display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 1; }
+.login2-feature { background: rgba(255,255,255,0.12); border-radius: 14px; padding: 16px 20px; display: flex; gap: 16px; align-items: flex-start; backdrop-filter: blur(4px); }
+.login2-feature-icon { font-size: 28px; flex-shrink: 0; background: rgba(255,255,255,0.2); width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.login2-feature-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.login2-feature-desc { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.4; }
+
+/* ══════════════════════════════════════
+   KANBAN CRM
+══════════════════════════════════════ */
+.kanban-board {
+  display: flex; gap: 14px; overflow-x: auto;
+  padding-bottom: 16px; align-items: flex-start;
+}
+
+.kanban-col {
+  flex-shrink: 0; width: 280px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+
+.kanban-col-header {
+  padding: 14px 14px 4px; border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.kanban-count {
+  font-size: 12px; font-weight: 800;
+  padding: 2px 8px; border-radius: 20px;
+}
+
+.kanban-cards {
+  padding: 8px; max-height: 70vh;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+}
+
+.kanban-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px;
+  cursor: grab; transition: var(--transition);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.kanban-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.1); transform: translateY(-1px); border-color: var(--primary); }
+.kanban-card:active { cursor: grabbing; }
+
+.kanban-card-header { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 4px; }
+.kanban-drag { color: var(--text-muted); font-size: 14px; cursor: grab; margin-top: 1px; }
+
+.kanban-card-actions { display: flex; gap: 4px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-light); }
+
+.kanban-add-btn {
+  width: 100%; padding: 8px; border: 1.5px dashed var(--border);
+  background: transparent; border-radius: var(--radius-sm);
+  color: var(--text-muted); font-size: 13px; cursor: pointer;
+  transition: var(--transition); font-family: 'Nunito', sans-serif;
+}
+.kanban-add-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+/* ══════════════════════════════════════
+   DARK MODE — Améliorations visuelles
+══════════════════════════════════════ */
+
+/* Dashboard hero — fond dégradé comme backoffice.preveris.pro */
+.dark .dashboard-hero {
+  background: linear-gradient(135deg, #13161f 0%, #1a1d2e 100%);
+  border: 1px solid #232638;
+}
+
+/* Cards avec bordure subtile en dark */
+.dark .card {
+  border-color: #232638;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.dark .card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  border-color: #2e3350;
+}
+
+/* Topbar dark premium */
+.dark .topbar {
+  background: #13161f;
+  border-bottom: 1px solid #232638;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+}
+
+/* Nav buttons dark */
+.dark .nav-btn {
+  color: #9095a8;
+}
+
+.dark .nav-btn:hover {
+  background: rgba(232,93,38,0.12);
+  color: var(--primary);
+}
+
+.dark .nav-btn.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(232,93,38,0.35);
+}
+
+/* Stat cards dark — accent couleur */
+.dark .stat-card {
+  background: linear-gradient(135deg, #13161f, #1a1d2e);
+  border: 1px solid #232638;
+}
+
+/* Tables dark */
+.dark table thead tr {
+  background: #1a1d2e;
+}
+
+.dark table tbody tr:hover {
+  background: #1e2235;
+}
+
+.dark th {
+  color: #5c6278;
+  border-bottom: 2px solid #232638;
+}
+
+.dark td {
+  border-bottom: 1px solid #1a1d2e;
+}
+
+/* Inputs dark */
+.dark input, .dark select, .dark textarea {
+  background: #1a1d2e;
+  border-color: #232638;
+  color: #e8eaf0;
+}
+
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  border-color: var(--primary);
+  background: #1e2235;
+}
+
+/* Search bar dark */
+.dark .search-input {
+  background: #1a1d2e;
+  border-color: #232638;
+  color: #e8eaf0;
+}
+
+/* Modal dark */
+.dark .modal-box {
+  background: #13161f;
+  border: 1px solid #232638;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.dark .modal-header {
+  background: #1a1d2e;
+  border-bottom: 1px solid #232638;
+}
+
+/* Kanban dark */
+.dark .kanban-col {
+  background: #13161f;
+  border-color: #232638;
+}
+
+.dark .kanban-col-header {
+  background: #1a1d2e;
+}
+
+.dark .kanban-card {
+  background: #1a1d2e;
+  border-color: #232638;
+}
+
+.dark .kanban-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(232,93,38,0.15);
+}
+
+/* ProjetDetail dark */
+.dark .pd-modal {
+  background: #13161f;
+}
+
+.dark .pd-tabs {
+  background: #13161f;
+  border-bottom-color: #232638;
+}
+
+.dark .pd-tab {
+  color: #5c6278;
+}
+
+.dark .pd-tab.active {
+  color: var(--primary);
+}
+
+.dark .pd-save-bar,
+.dark .pd-footer {
+  background: #1a1d2e;
+  border-color: #232638;
+}
+
+.dark .pd-body {
+  background: #13161f;
+}
+
+.dark .pd-info-box {
+  background: #1a1d2e;
+  border-color: #232638;
+}
+
+.dark .pd-input {
+  background: #0d0f18;
+  border-color: #232638;
+  color: #e8eaf0;
+}
+
+.dark .pd-histo-content {
+  background: #1a1d2e;
+  border-color: #232638;
+}
+
+/* Scrollbar dark */
+.dark ::-webkit-scrollbar-track { background: #0d0f18; }
+.dark ::-webkit-scrollbar-thumb { background: #232638; }
+.dark ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* Login dark */
+.dark .login2-left {
+  background: #13161f;
+}
+
+.dark .login2-input-wrap {
+  background: #1a1d2e;
+  border-color: #232638;
+}
+
+.dark .login2-input {
+  color: #e8eaf0;
+}
+
+/* ══════════════════════════════════════
+   IA ASSISTANT — Chatbot flottant
+══════════════════════════════════════ */
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+@keyframes iaSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Bouton bulle flottante */
+.ia-bubble {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #ff6b35);
+  border: none; font-size: 26px; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(232,93,38,0.4);
+  z-index: 500; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+}
+.ia-bubble:hover { transform: scale(1.1); box-shadow: 0 12px 32px rgba(232,93,38,0.5); }
+
+.ia-bubble-badge {
+  position: absolute; top: -2px; right: -2px;
+  background: #4ade80; color: #fff;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 5px; border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Panel principal */
+.ia-panel {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 380px; height: 580px;
+  background: var(--bg-card);
+  border-radius: 20px; border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  z-index: 500; display: flex; flex-direction: column;
+  overflow: hidden; animation: iaSlideIn 0.25s ease;
+}
+
+/* Header */
+.ia-header {
+  background: linear-gradient(135deg, var(--primary), #ff6b35);
+  padding: 14px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+
+.ia-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+.ia-header-btn {
+  background: rgba(255,255,255,0.15); border: none;
+  color: #fff; width: 28px; height: 28px;
+  border-radius: 8px; cursor: pointer;
+  font-size: 13px; transition: background 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.ia-header-btn:hover { background: rgba(255,255,255,0.3); }
+
+/* Messages zone */
+.ia-messages {
+  flex: 1; overflow-y: auto;
+  padding: 16px; display: flex;
+  flex-direction: column; gap: 4px;
+}
+
+/* Suggestions */
+.ia-suggestions {
+  padding: 0 12px 8px;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+
+.ia-suggestion-btn {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11.5px; cursor: pointer; color: var(--text-secondary);
+  font-family: 'Nunito', sans-serif; transition: var(--transition);
+  white-space: nowrap;
+}
+.ia-suggestion-btn:hover {
+  background: var(--primary-light); color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Input bar */
+.ia-input-bar {
+  display: flex; gap: 8px; padding: 12px 14px;
+  border-top: 1px solid var(--border); flex-shrink: 0;
+  background: var(--bg);
+}
+
+.ia-input {
+  flex: 1; padding: 9px 14px;
+  border: 1.5px solid var(--border); border-radius: 24px;
+  font-size: 13px; font-family: 'Nunito', sans-serif;
+  color: var(--text-primary); background: var(--bg-card);
+  outline: none; transition: var(--transition);
+}
+.ia-input:focus { border-color: var(--primary); }
+
+.ia-send-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #ff6b35);
+  border: none; color: #fff; font-size: 16px;
+  cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ia-send-btn:hover:not(:disabled) { transform: scale(1.1); box-shadow: 0 4px 14px rgba(232,93,38,0.4); }
+.ia-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Dark mode */
+.dark .ia-panel { background: #13161f; border-color: #232638; }
+.dark .ia-input  { background: #1a1d2e; border-color: #232638; color: #e8eaf0; }
+.dark .ia-input-bar { background: #1a1d2e; }
+.dark .ia-suggestion-btn { background: #1a1d2e; border-color: #232638; color: #9095a8; }

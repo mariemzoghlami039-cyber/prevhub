@@ -1,6 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProjetDetail from "./ProjetDetail";
+import IAAssistant from "./IAAssistant";
 import "./App.css";
+
+// ══════════════════════════════════════════════════════════════
+//  PERSISTENT STORAGE HOOK
+//  Sauvegarde automatique dans localStorage
+// ══════════════════════════════════════════════════════════════
+
+function useLocalStorage(key, defaultValue) {
+  const [value, setValue] = useState(() => {
+    try {
+      const saved = localStorage.getItem("prevhub_" + key);
+      return saved ? JSON.parse(saved) : defaultValue;
+    } catch { return defaultValue; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("prevhub_" + key, JSON.stringify(value)); }
+    catch {}
+  }, [key, value]);
+
+  return [value, setValue];
+}
 
 // ══════════════════════════════════════════════════════════════
 //  MOCK DATA
@@ -254,10 +276,11 @@ function Toggle({ checked, onChange }) {
 // ══════════════════════════════════════════════════════════════
 
 function LoginPage({ onLogin }) {
-  const [email, setEmail] = useState("admin@preveris.pro");
+  const [email, setEmail]       = useState("admin@preveris.pro");
   const [password, setPassword] = useState("admin123");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [showPwd, setShowPwd]   = useState(false);
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
 
   const handleLogin = () => {
     setError("");
@@ -274,36 +297,109 @@ function LoginPage({ onLogin }) {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-box">
-        <div className="login-logo">
-          <div className="login-logo-icon">P</div>
-          <div className="login-logo-text">Prev'Hub</div>
-          <div className="login-logo-sub">PREVERIS — Administration</div>
+    <div className="login2-page">
+      {/* ── Côté gauche — Formulaire ── */}
+      <div className="login2-left">
+        {/* Logo */}
+        <div className="login2-logo">
+          <div className="login2-logo-icon">P</div>
+          <span className="login2-logo-text">Prev<span style={{color:"var(--primary)"}}>&#39;</span>Hub</span>
         </div>
 
-        <h2 className="login-title">Connexion</h2>
-        <p className="login-sub">Connectez-vous à votre espace admin</p>
+        <div className="login2-form-wrap">
+          {/* Icone cadenas */}
+          <div className="login2-lock">🔒</div>
+          <h2 className="login2-title">Connexion</h2>
+          <p className="login2-sub">Connectez-vous à votre compte Prev'Hub</p>
 
-        {error && <div className="login-error">⚠️ {error}</div>}
+          {error && <div className="login-error">⚠️ {error}</div>}
 
-        <div className="field">
-          <label>Email</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleLogin()} />
+          {/* Champ email */}
+          <div className="login2-field">
+            <label className="login2-label">Nom d'utilisateur</label>
+            <div className="login2-input-wrap">
+              <span className="login2-icon">👤</span>
+              <input
+                className="login2-input"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleLogin()}
+                placeholder="admin@preveris.pro"
+              />
+            </div>
+          </div>
+
+          {/* Champ mot de passe */}
+          <div className="login2-field">
+            <label className="login2-label">Mot de passe</label>
+            <div className="login2-input-wrap">
+              <span className="login2-icon">🔑</span>
+              <input
+                className="login2-input"
+                type={showPwd ? "text" : "password"}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleLogin()}
+                placeholder="••••••••••••"
+              />
+              <button className="login2-eye" onClick={() => setShowPwd(s => !s)}>
+                {showPwd ? "🙈" : "👁️"}
+              </button>
+            </div>
+          </div>
+
+          <button className="login2-btn" onClick={handleLogin} disabled={loading}>
+            {loading ? "⏳ Connexion en cours..." : "Se connecter →"}
+          </button>
+
+          <div className="login2-hint">
+            💡 Demo: admin@preveris.pro / admin123
+          </div>
         </div>
-        <div className="field">
-          <label>Mot de passe</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleLogin()} />
+      </div>
+
+      {/* ── Côté droit — Marketing ── */}
+      <div className="login2-right">
+        {/* Shapes décoratives */}
+        <div className="login2-shape login2-shape-1" />
+        <div className="login2-shape login2-shape-2" />
+        <div className="login2-shape login2-shape-3" />
+        <div className="login2-shape login2-shape-4" />
+
+        {/* Badges */}
+        <div className="login2-badges">
+          <span className="login2-badge">⚡ Accès Sécurisé</span>
+          <span className="login2-badge">🚀 Innovation 2026</span>
         </div>
 
-        <button className="login-btn" onClick={handleLogin} disabled={loading}>
-          {loading ? "Connexion..." : "Se connecter →"}
-        </button>
+        {/* Texte principal */}
+        <div className="login2-hero">
+          <h1 className="login2-hero-title">
+            Transformez<br />
+            <span style={{ color: "#fff", fontWeight: 900 }}>votre Prévoyance</span><br />
+            <span style={{ color: "#fff", fontWeight: 900 }}>Collective</span>
+          </h1>
+          <p className="login2-hero-sub">
+            La plateforme tout-en-un des professionnels de la prévoyance d'entreprise
+          </p>
+        </div>
 
-        <div className="login-hint">
-          <span>💡 Demo: admin@preveris.pro / admin123</span>
+        {/* Features */}
+        <div className="login2-features">
+          {[
+            { icon: "🤖", title: "IA Assistant", desc: "Assistant conversationnel qui analyse vos dossiers en langage simple" },
+            { icon: "🛡️", title: "Sécurité RGPD", desc: "Conformité totale avec audit trail complet et données protégées" },
+            { icon: "📊", title: "Analytics Temps Réel", desc: "Tableaux de bord et rapports générés automatiquement" },
+          ].map(f => (
+            <div key={f.title} className="login2-feature">
+              <div className="login2-feature-icon">{f.icon}</div>
+              <div>
+                <div className="login2-feature-title">{f.title}</div>
+                <div className="login2-feature-desc">{f.desc}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -452,7 +548,7 @@ function Dashboard({ setPage }) {
 
 // ── PROJETS ────────────────────────────────────────────────
 function ProjetsPage() {
-  const [projets, setProjets]       = useState(MOCK_PROJETS);
+  const [projets, setProjets]       = useLocalStorage("projets", MOCK_PROJETS);
   const [selected, setSelected]     = useState(null);
   const [modalNew, setModalNew]     = useState(false);
   const [form, setForm]             = useState({});
@@ -599,7 +695,7 @@ function ProjetsPage() {
 
 // ── UTILISATEURS ───────────────────────────────────────────
 function UtilisateursPage() {
-  const [users, setUsers] = useState(MOCK_USERS);
+  const [users, setUsers] = useLocalStorage("users", MOCK_USERS);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -645,55 +741,146 @@ function UtilisateursPage() {
   );
 }
 
-// ── CRM ────────────────────────────────────────────────────
+// ── CRM — KANBAN PIPELINE ──────────────────────────────────
 function CRMPage() {
-  const [leads, setLeads] = useState(MOCK_LEADS);
-  const [modal, setModal] = useState(null);
-  const [form, setForm] = useState({});
+  const MOCK_LEADS_EXTENDED = [
+    { id: 1, nom: "Mutuelle des Archi...", contact: "Peggy CHASSIER", email: "peggy.chassier@email.fr", tel: "0772360325", source: "Site web", statut: "Nouveau Lead", valeur: 0, score: 10, date: "2026-03-01" },
+    { id: 2, nom: "Institut Saint-Domi...", contact: "Jean-Paul AUBRY", email: "jean-paul746@email.fr", tel: "0681860066", source: "Référence", statut: "Nouveau Lead", valeur: 0, score: 5, date: "2026-02-28" },
+    { id: 3, nom: "Restaurant JAP", contact: "Kamel LAZAAR", email: "lazaar.hic@gmail.fr", tel: "0677997908", source: "LinkedIn", statut: "Nouveau Lead", valeur: 0, score: 5, date: "2026-02-25" },
+    { id: 4, nom: "Reveyron", contact: "Maxime MOREAU", email: "mmoreau@keo.fr", tel: "0788280264", source: "Référence", statut: "Qualifié", valeur: 0, score: 10, date: "2026-02-20" },
+    { id: 5, nom: "Domaine de la Tre...", contact: "Maëva KAVEGE", email: "maevakavege@email.fr", tel: "0685869054", source: "Site web", statut: "Qualifié", valeur: 0, score: 15, date: "2026-02-18" },
+    { id: 6, nom: "Client", contact: "Client", email: "client@email.fr", tel: "", source: "Téléphone", statut: "Qualifié", valeur: 0, score: 15, date: "2026-02-15" },
+    { id: 7, nom: "Les Polissons", contact: "Marius Brun", email: "marius.brun@email.fr", tel: "0615930909", source: "LinkedIn", statut: "Qualifié", valeur: 0, score: 10, date: "2026-02-10" },
+    { id: 8, nom: "DPS Market Saint-...", contact: "Nabil MAKSENE", email: "sas.maksene@email.fr", tel: "0669380808", source: "Site web", statut: "Devis Envoyé", valeur: 0, score: 20, date: "2026-02-08" },
+    { id: 9, nom: "Salle Rustic", contact: "Morad HACHEMI", email: "m.hachemi@vill.fr", tel: "0665775708", source: "Référence", statut: "Devis Envoyé", valeur: 0, score: 15, date: "2026-02-05" },
+    { id: 10, nom: "Mutuelle des Archi...", contact: "Peggy CHASSIER", email: "peggy.chassier@email.fr", tel: "0772360325", source: "Site web", statut: "Négociation", valeur: 0, score: 25, date: "2026-01-30" },
+    { id: 11, nom: "Association Emprein...", contact: "Association", email: "contact@assoc.fr", tel: "", source: "Référence", statut: "Négociation", valeur: 0, score: 25, date: "2026-01-28" },
+  ];
+
+  const COLONNES = [
+    { id: "Nouveau Lead",  label: "Nouveau Lead",  color: "#94a3b8", bg: "#f8fafc" },
+    { id: "Qualifié",      label: "Qualifié",       color: "#10b981", bg: "#f0fdf4" },
+    { id: "Devis Envoyé",  label: "Devis Envoyé",   color: "#f59e0b", bg: "#fffbeb" },
+    { id: "Négociation",   label: "Négociation",    color: "#8b5cf6", bg: "#faf5ff" },
+    { id: "Gagné",         label: "Gagné",          color: "#059669", bg: "#ecfdf5" },
+  ];
+
+  const [leads, setLeads]   = useState(MOCK_LEADS_EXTENDED);
+  const [modal, setModal]   = useState(null);
+  const [form, setForm]     = useState({});
+  const [search, setSearch] = useState("");
+  const [dragId, setDragId] = useState(null);
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
+
+  const totalVal = leads.reduce((a, l) => a + Number(l.valeur || 0), 0);
+
   const save = () => {
-    if (modal === "new") setLeads(prev => [...prev, { ...form, id: Date.now(), date: today() }]);
+    if (modal === "new") setLeads(prev => [...prev, { ...form, id: Date.now(), date: today(), score: 5 }]);
     else setLeads(prev => prev.map(l => l.id === form.id ? form : l));
     setModal(null);
   };
+
+  const moveCard = (id, newStatut) => setLeads(prev => prev.map(l => l.id === id ? { ...l, statut: newStatut } : l));
+
+  const filtered = leads.filter(l => !search || l.nom.toLowerCase().includes(search.toLowerCase()) || l.contact.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <div>
+      {/* Header */}
       <div className="page-header">
-        <h2 className="page-title">🎯 CRM — Leads</h2>
-        <Btn onClick={() => { setForm({ nom: "", contact: "", email: "", source: "Site web", statut: "Nouveau" }); setModal("new"); }}>＋ Nouveau Lead</Btn>
+        <div>
+          <h2 className="page-title">🎯 Pipeline de Vente</h2>
+          <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>
+            {leads.length} opportunités · Valeur totale: {totalVal.toLocaleString()} €
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <input
+            style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid var(--border)", background: "var(--bg)", fontSize: 13, outline: "none", width: 220 }}
+            placeholder="🔍 Rechercher un lead..."
+            value={search} onChange={e => setSearch(e.target.value)}
+          />
+          <Btn onClick={() => { setForm({ nom: "", contact: "", email: "", tel: "", source: "Site web", statut: "Nouveau Lead", valeur: 0 }); setModal("new"); }}>＋ Nouveau Lead</Btn>
+        </div>
       </div>
-      <div className="stat-cards" style={{ marginBottom: 20 }}>
-        {["Nouveau", "Contacté", "Qualifié"].map(s => (
-          <Card key={s} className="stat-card">
-            <div className="stat-label">{s}</div>
-            <div className="stat-value" style={{ color: statColor(s) }}>{leads.filter(l => l.statut === s).length}</div>
-          </Card>
-        ))}
+
+      {/* Kanban Board */}
+      <div className="kanban-board">
+        {COLONNES.map(col => {
+          const colLeads = filtered.filter(l => l.statut === col.id);
+          const colVal   = colLeads.reduce((a, l) => a + Number(l.valeur || 0), 0);
+          return (
+            <div key={col.id} className="kanban-col"
+              onDragOver={e => e.preventDefault()}
+              onDrop={() => dragId && moveCard(dragId, col.id)}>
+
+              {/* Entête colonne */}
+              <div className="kanban-col-header">
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: col.color }} />
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{col.label}</span>
+                  <span className="kanban-count" style={{ background: col.color + "22", color: col.color }}>{colLeads.length}</span>
+                </div>
+                <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{colVal.toLocaleString()} €</div>
+              </div>
+
+              {/* Search dans colonne */}
+              <div style={{ padding: "0 8px 8px" }}>
+                <input style={{ width: "100%", padding: "5px 10px", borderRadius: 8, border: "1px solid var(--border)", fontSize: 12, background: "var(--bg)", outline: "none" }}
+                  placeholder="Rechercher par nom..." />
+              </div>
+
+              {/* Cards */}
+              <div className="kanban-cards">
+                {colLeads.map(lead => (
+                  <div key={lead.id} className="kanban-card"
+                    draggable
+                    onDragStart={() => setDragId(lead.id)}
+                    onDragEnd={() => setDragId(null)}>
+                    <div className="kanban-card-header">
+                      <span className="kanban-drag">✚</span>
+                      <span style={{ fontWeight: 700, fontSize: 13, flex: 1 }}>{lead.nom}</span>
+                      <span style={{ fontSize: 11, color: col.color, fontWeight: 700, background: col.color + "22", padding: "1px 6px", borderRadius: 10 }}>↗ {lead.score}</span>
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)", margin: "4px 0" }}>{lead.contact}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--success)" }}>$ {Number(lead.valeur || 0).toLocaleString()} €</div>
+                    {lead.email && <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>✉️ {lead.email}</div>}
+                    {lead.tel && <div style={{ fontSize: 11, color: "var(--text-muted)" }}>📞 {lead.tel}</div>}
+                    <div className="kanban-card-actions">
+                      <button className="action-btn" onClick={() => { setForm(lead); setModal("edit"); }}>✏️</button>
+                      <button className="action-btn" onClick={() => setLeads(prev => prev.filter(x => x.id !== lead.id))}>🗑️</button>
+                      {col.id !== "Gagné" && (
+                        <button className="action-btn" title="Avancer"
+                          onClick={() => {
+                            const idx = COLONNES.findIndex(c => c.id === col.id);
+                            if (idx < COLONNES.length - 1) moveCard(lead.id, COLONNES[idx + 1].id);
+                          }}>→</button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Ajouter dans cette colonne */}
+                <button className="kanban-add-btn"
+                  onClick={() => { setForm({ nom: "", contact: "", email: "", tel: "", source: "Site web", statut: col.id, valeur: 0 }); setModal("new"); }}>
+                  ＋ Ajouter
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
-      <Card><div className="table-wrap"><table>
-        <thead><tr>{["Entreprise", "Contact", "Email", "Source", "Statut", "Date", "Actions"].map(h => <th key={h}>{h}</th>)}</tr></thead>
-        <tbody>{leads.map(l => (
-          <tr key={l.id}>
-            <td className="td-name">{l.nom}</td>
-            <td className="td-muted">{l.contact}</td>
-            <td className="td-link">{l.email}</td>
-            <td className="td-muted">{l.source}</td>
-            <td><Badge label={l.statut} /></td>
-            <td className="td-tiny">{l.date}</td>
-            <td>
-              <button className="action-btn" onClick={() => { setForm(l); setModal("edit"); }}>✏️</button>
-              <button className="action-btn" onClick={() => setLeads(prev => prev.filter(x => x.id !== l.id))}>🗑️</button>
-            </td>
-          </tr>
-        ))}</tbody>
-      </table></div></Card>
+
+      {/* Modal */}
       {(modal === "new" || modal === "edit") && (
         <Modal title={modal === "new" ? "Nouveau Lead" : "Modifier Lead"} onClose={() => setModal(null)}>
-          <Field label="Entreprise" value={form.nom || ""} onChange={f("nom")} />
+          <Field label="Nom de l'entreprise" value={form.nom || ""} onChange={f("nom")} />
           <Field label="Contact" value={form.contact || ""} onChange={f("contact")} />
           <Field label="Email" value={form.email || ""} onChange={f("email")} type="email" />
+          <Field label="Téléphone" value={form.tel || ""} onChange={f("tel")} />
+          <Field label="Valeur estimée (€)" value={form.valeur || ""} onChange={f("valeur")} type="number" />
           <Field label="Source" value={form.source || ""} onChange={f("source")} options={["Site web", "Référence", "LinkedIn", "Téléphone", "Salon"]} />
-          <Field label="Statut" value={form.statut || ""} onChange={f("statut")} options={["Nouveau", "Contacté", "Qualifié"]} />
+          <Field label="Étape" value={form.statut || ""} onChange={f("statut")} options={COLONNES.map(c => c.id)} />
           <div className="modal-footer">
             <Btn outline onClick={() => setModal(null)}>Annuler</Btn>
             <Btn onClick={save}>{modal === "new" ? "Créer" : "Enregistrer"}</Btn>
@@ -706,7 +893,7 @@ function CRMPage() {
 
 // ── OPPORTUNITÉS ───────────────────────────────────────────
 function OpportunitesPage() {
-  const [opps, setOpps] = useState(MOCK_OPPORTUNITES);
+  const [opps, setOpps] = useLocalStorage("opportunites", MOCK_OPPORTUNITES);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -772,7 +959,7 @@ function OpportunitesPage() {
 
 // ── SUIVI ÉTABLISSEMENT ────────────────────────────────────
 function SuiviPage() {
-  const [etabs, setEtabs] = useState(MOCK_ETABLISSEMENTS);
+  const [etabs, setEtabs] = useLocalStorage("etablissements", MOCK_ETABLISSEMENTS);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -831,7 +1018,7 @@ function SuiviPage() {
 
 // ── TÂCHES ─────────────────────────────────────────────────
 function TachesPage() {
-  const [taches, setTaches] = useState(MOCK_TACHES);
+  const [taches, setTaches] = useLocalStorage("taches", MOCK_TACHES);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -886,7 +1073,7 @@ function TachesPage() {
 function ComptabilitePage() {
   const [comptes] = useState(MOCK_COMPTES);
   const [compteActif, setCompteActif] = useState(1);
-  const [factures, setFactures] = useState(MOCK_FACTURES);
+  const [factures, setFactures] = useLocalStorage("factures", MOCK_FACTURES);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -961,7 +1148,7 @@ function ComptabilitePage() {
 
 // ── EFFECTIFS ──────────────────────────────────────────────
 function EffectifsPage() {
-  const [effectifs, setEffectifs] = useState(MOCK_EFFECTIFS);
+  const [effectifs, setEffectifs] = useLocalStorage("effectifs", MOCK_EFFECTIFS);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -1013,7 +1200,7 @@ function EffectifsPage() {
 
 // ── CANDIDATURES ───────────────────────────────────────────
 function CandidaturesPage() {
-  const [cands, setCands] = useState(MOCK_CANDIDATURES);
+  const [cands, setCands] = useLocalStorage("candidatures", MOCK_CANDIDATURES);
   const [modal, setModal] = useState(null);
   const [form, setForm] = useState({});
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -1441,7 +1628,7 @@ function AnalyticsPage() {
 
 // ── PROFIL ─────────────────────────────────────────────────
 function ProfilPage({ user, onLogout }) {
-  const [profil, setProfil] = useState({ ...MOCK_PROFIL, ...user });
+  const [profil, setProfil] = useLocalStorage("profil", { ...MOCK_PROFIL, ...user });
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(profil);
   const f = k => v => setForm(p => ({ ...p, [k]: v }));
@@ -1499,7 +1686,16 @@ function ProfilPage({ user, onLogout }) {
           <span>Notifications push</span>
           <Toggle checked={false} onChange={() => {}} />
         </div>
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+          <div style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 8 }}>⚠️ Zone dangereuse</div>
+          <Btn danger small onClick={() => {
+            if (window.confirm("Réinitialiser toutes les données? (Retour aux données demo)")) {
+              ["projets","users","effectifs","candidatures","taches","factures","opportunites","etablissements"].forEach(k => localStorage.removeItem("prevhub_" + k));
+              window.location.reload();
+            }
+          }}>🔄 Réinitialiser les données demo</Btn>
+        </div>
+        <div style={{ marginTop: 12 }}>
           <Btn danger onClick={onLogout}>🚪 Se déconnecter</Btn>
         </div>
       </Card>
@@ -1523,32 +1719,32 @@ function PlaceholderPage({ title, icon }) {
 // ══════════════════════════════════════════════════════════════
 
 const NAV1 = [
-  { id: "dashboard", label: "Dashboard", icon: "📊" },
-  { id: "projets", label: "Projets", icon: "📁" },
-  { id: "crm", label: "CRM", icon: "🎯" },
-  { id: "suivi", label: "Suivi établissement", icon: "🏢" },
-  { id: "emails", label: "Emails", icon: "✉️" },
-  { id: "opportunites", label: "Opportunités", icon: "💡" },
-  { id: "candidatures", label: "Candidatures", icon: "📝" },
-  { id: "support", label: "Support", icon: "🎧" },
-  { id: "validations", label: "Validations", icon: "✅" },
+  { id: "dashboard",    label: "Dashboard",            icon: "📊", color: "#e85d26" },
+  { id: "projets",      label: "Projets",              icon: "📁", color: "#3b82f6" },
+  { id: "crm",          label: "CRM",                  icon: "🎯", color: "#8b5cf6" },
+  { id: "suivi",        label: "Suivi établissement",  icon: "🏢", color: "#06b6d4" },
+  { id: "emails",       label: "Emails",               icon: "✉️", color: "#6366f1" },
+  { id: "opportunites", label: "Opportunités",          icon: "💡", color: "#f59e0b" },
+  { id: "candidatures", label: "Candidatures",          icon: "📝", color: "#10b981" },
+  { id: "support",      label: "Support",              icon: "🎧", color: "#ef4444" },
+  { id: "validations",  label: "Validations",          icon: "✅", color: "#22c55e" },
 ];
 const NAV2 = [
-  { id: "taches", label: "Gestionnaire de Tâches", icon: "☑️" },
-  { id: "comptabilite", label: "Comptabilité", icon: "🧾" },
-  { id: "independants", label: "Indépendants", icon: "🧑‍💼" },
-  { id: "effectifs", label: "Effectifs", icon: "👔" },
-  { id: "autorisations", label: "Autorisations", icon: "🔐" },
-  { id: "sms", label: "SMS/WhatsApp", icon: "💬" },
-  { id: "parametres", label: "Paramètres", icon: "⚙️" },
-  { id: "campagnes", label: "Campagnes Drip", icon: "📧" },
+  { id: "taches",       label: "Gestionnaire de Tâches", icon: "☑️", color: "#3b82f6" },
+  { id: "comptabilite", label: "Comptabilité",            icon: "🧾", color: "#10b981" },
+  { id: "independants", label: "Indépendants",            icon: "🧑‍💼", color: "#8b5cf6" },
+  { id: "effectifs",    label: "Effectifs",               icon: "👔", color: "#06b6d4" },
+  { id: "autorisations",label: "Autorisations",           icon: "🔐", color: "#f59e0b" },
+  { id: "sms",          label: "SMS/WhatsApp",            icon: "💬", color: "#22c55e" },
+  { id: "parametres",   label: "Paramètres",              icon: "⚙️", color: "#64748b" },
+  { id: "campagnes",    label: "Campagnes Drip",          icon: "📧", color: "#6366f1" },
 ];
 const NAV3 = [
-  { id: "attribution", label: "Attribution Leads", icon: "🎯" },
-  { id: "analytics", label: "Analytics", icon: "📈" },
-  { id: "formulaires", label: "Formulaires Web", icon: "📋" },
-  { id: "webhooks", label: "Webhooks & Intégrations", icon: "🔗" },
-  { id: "ressources", label: "Ressources", icon: "📚" },
+  { id: "attribution",  label: "Attribution Leads",       icon: "🎯", color: "#e85d26" },
+  { id: "analytics",    label: "Analytics",               icon: "📈", color: "#3b82f6" },
+  { id: "formulaires",  label: "Formulaires Web",         icon: "📋", color: "#8b5cf6" },
+  { id: "webhooks",     label: "Webhooks & Intégrations", icon: "🔗", color: "#06b6d4" },
+  { id: "ressources",   label: "Ressources",              icon: "📚", color: "#f59e0b" },
 ];
 const ALL_NAV = [...NAV1, ...NAV2, ...NAV3];
 
@@ -1559,9 +1755,16 @@ const ALL_NAV = [...NAV1, ...NAV2, ...NAV3];
 export default function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => localStorage.getItem("prevhub_dark") === "true");
   const [notifs, setNotifs] = useState(MOCK_NOTIFS);
   const [showNotifs, setShowNotifs] = useState(false);
+  const [showIA, setShowIA] = useState(false);
+
+  // Applique dark mode sur <body> — c'est ici que ça marche!
+  useEffect(() => {
+    document.body.classList.toggle("dark", dark);
+    localStorage.setItem("prevhub_dark", dark);
+  }, [dark]);
 
   const unreadNotifs = notifs.filter(n => !n.lu).length;
 
@@ -1598,16 +1801,33 @@ export default function App() {
 
   const NavRow = ({ items }) => (
     <div className="nav-row">
-      {items.map(n => (
-        <button key={n.id} className={`nav-btn ${page === n.id ? "active" : ""}`} onClick={() => setPage(n.id)}>
-          <span>{n.icon}</span>{n.label}
-        </button>
-      ))}
+      {items.map(n => {
+        const isActive = page === n.id;
+        return (
+          <button
+            key={n.id}
+            className={`nav-btn ${isActive ? "active" : ""}`}
+            onClick={() => setPage(n.id)}
+            style={isActive ? {
+              background: n.color,
+              color: "#fff",
+              boxShadow: `0 4px 14px ${n.color}55`,
+              borderColor: "transparent",
+            } : {
+              "--nav-hover-color": n.color,
+            }}
+            onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = n.color + "22"; e.currentTarget.style.color = n.color; e.currentTarget.style.borderColor = n.color + "44"; }}}
+            onMouseLeave={e => { if (!isActive) { e.currentTarget.style.background = ""; e.currentTarget.style.color = ""; e.currentTarget.style.borderColor = ""; }}}
+          >
+            <span>{n.icon}</span>{n.label}
+          </button>
+        );
+      })}
     </div>
   );
 
   return (
-    <div className={dark ? "dark" : ""} onClick={() => setShowNotifs(false)}>
+    <div onClick={() => setShowNotifs(false)}>
       {/* ── Topbar ── */}
       <div className="topbar">
         <div className="topbar-logo">
@@ -1624,6 +1844,12 @@ export default function App() {
         <div className="topbar-actions">
           <button className="icon-btn" onClick={() => setDark(d => !d)} title="Dark mode">
             {dark ? "☀️" : "🌙"}
+          </button>
+          <button className="icon-btn" title="Assistant IA"
+            onClick={() => setShowIA(s => !s)}
+            style={{ position: "relative", background: showIA ? "var(--primary)" : "", color: showIA ? "#fff" : "" }}>
+            🤖
+            <span style={{ position: "absolute", top: -2, right: -2, width: 8, height: 8, borderRadius: "50%", background: "#4ade80", border: "2px solid var(--bg-nav)" }} />
           </button>
           <button className="icon-btn" title="Notifications"
             onClick={e => { e.stopPropagation(); setShowNotifs(s => !s); }}>
@@ -1660,6 +1886,15 @@ export default function App() {
 
       {/* ── Content ── */}
       <div className="main-content">{renderPage()}</div>
+
+      {/* ── IA Assistant ── */}
+      {showIA && <IAAssistant onClose={() => setShowIA(false)} />}
+      {!showIA && (
+        <button className="ia-bubble" onClick={() => setShowIA(true)}>
+          🤖
+          <span className="ia-bubble-badge">IA</span>
+        </button>
+      )}
     </div>
   );
 }
